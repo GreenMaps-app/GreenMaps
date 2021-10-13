@@ -11,10 +11,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
-// there were some issues when I initially booted up the app since OpenApi didn't install properly.
-// the command I entered to get it working was: "dotnet add package Swashbuckle.AspNetCore -s https://api.nuget.org/v3/index.json"
-// Only enter this if the "using Microsoft.OpenApi.Models;" is highlighted red
+// ensure that NuGet is set up properly on your project
+// right click on MapAPI and clikc Manage NuGet packages
+// make sure that https://www.nuget.org/api/v2/ is part of a source
+
+// use NuGet to install Swashbuckle.AspNetCore or,
+// use command: 'dotnet add package Swashbuckle.AspNetCore --version 5.6.3' for swagger
+// Only enter this if the "using Microsoft.OpenApi.Models;" is underlined in red
+
+// additionally, the EntityFrameworkCore requires a package to be installed
+// use NuGet for this
 
 
 namespace MapAPI
@@ -37,6 +45,8 @@ namespace MapAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MapAPI", Version = "v1" });
             });
+            // services.AddDbContext<MyContext> = 
+            // services.BuildServiceProvider().GetService<>()
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
