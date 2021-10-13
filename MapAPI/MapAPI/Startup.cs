@@ -12,6 +12,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+// there were some issues when I initially booted up the app since OpenApi didn't install properly.
+// the command I entered to get it working was: "dotnet add package Swashbuckle.AspNetCore -s https://api.nuget.org/v3/index.json"
+// Only enter this if the "using Microsoft.OpenApi.Models;" is highlighted red
+
+
 namespace MapAPI
 {
     public class Startup
