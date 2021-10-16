@@ -2,60 +2,51 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using System;
-using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using GreenMapsApp.ViewModel;
+using GreenMapsApp.Model;
 using System.Collections.ObjectModel;
+using Plugin.Geolocator;
 
 namespace GreenMapsApp
 {
     class MapHelperFunctions
     {
-        public async Task<string> PopulateMap(Map map)
+        public async void PopulateMap(Map map)
         {
             RestService restService = new RestService();
             var returnedJsonArray = await restService.GetAll();
-            Console.WriteLine(returnedJsonArray);
-            Console.WriteLine("populatemap");
             ObservableCollection<PinLocations> pinLocations = new ObservableCollection<PinLocations>();
 
 
             List<MapLocationDatum> parsedJsonArray = JsonConvert.DeserializeObject<List<MapLocationDatum>>(returnedJsonArray);
-            Console.WriteLine(parsedJsonArray);
-            Console.WriteLine("findjson");
 
-            foreach (var json in parsedJsonArray)
+            foreach (MapLocationDatum json in parsedJsonArray)
             {
-                Console.WriteLine(json.Id);
-                Console.WriteLine("findjson");
                 string parsedJson = JsonConvert.SerializeObject(json);
-                JObject parsedJsonObj = JObject.Parse(parsedJson);
-                
-                PinLocations temp = new PinLocations { Latitude = json.Latitude, Longitude = json.Longitude};
-                pinLocations.Add(temp);
+
+                Pin pin = new Pin
+                {
+                    Label = "Test",
+                    Position = new Position(json.latitude, json.longitude),
+                    Address = json.message
+                };
+
+                map.Pins.Add(pin);
             }
-
-            foreach (var item in pinLocations)
-            {
-                Pin temp = new Pin();
-
-                temp.Label = "Test";
-                temp.Position = new Position(item.Latitude, item.Longitude);
-
-                map.Pins.Add(temp);
-            }
-
-            Pin manual = new Pin();
-            manual.Label = "Test";
-            manual.Position = new Position(42.26855,-123.21479);
-
-            map.Pins.Add(manual);
-
-            return "";
         }
+
+        public async void FindMe(Map map)
+        {
+            var locator = CrossGeolocator.Current;
+            Plugin.Geolocator.Abstractions.Position position = new Plugin.Geolocator.Abstractions.Position();
+
+            position = await locator.GetPositionAsync();
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude),
+                                            Distance.FromMiles(1)));
+        }
+
     }
 }

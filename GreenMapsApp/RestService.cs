@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 public interface IRestService
@@ -23,17 +24,26 @@ public class RestService : IRestService
 
     public async Task<string> Get(string uri)
     {
-        var response = await client.GetAsync(uri);
+        HttpResponseMessage response = await client.GetAsync(uri);
         response.EnsureSuccessStatusCode();
-        Console.WriteLine(response.Content.ReadAsStringAsync().Result);
-        Console.WriteLine("search");
         return response.Content.ReadAsStringAsync().Result;
     }
 
     public async Task<string> GetAll()
     {
-        var baseUrlAll = "https://greenmapsapi.azurewebsites.net/api/MapLocation";
+        string baseUrlAll = "https://greenmapsapi.azurewebsites.net/api/MapLocation";
 
-        return await this.Get(baseUrlAll);
+        return await Get(baseUrlAll);
+    }
+
+    public async void Post(string String)
+    {
+        string baseUrlAll = "https://greenmapsapi.azurewebsites.net/api/MapLocation/add";
+        StringContent content = new StringContent(String, Encoding.UTF8, "application/json");
+        Console.WriteLine("asnycsearch");
+        Console.WriteLine(String);
+        HttpResponseMessage response = await client.PostAsync(baseUrlAll, content);
+        Console.WriteLine(response);
+        Console.WriteLine("response");
     }
 }
