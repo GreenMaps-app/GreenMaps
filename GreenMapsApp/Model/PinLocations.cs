@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GreenMapsApp.ViewModel
+namespace GreenMapsApp.Model
 {
     public class PinLocations 
     {
