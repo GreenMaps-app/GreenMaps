@@ -6,7 +6,7 @@ namespace GreenMapsApp.ViewModel
 {
     public class PinLocations 
     {
-        public string Latitude { get; set; }
-        public string Longitutde { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }
