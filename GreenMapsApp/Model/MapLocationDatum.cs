@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GreenMapsApp.Model
 {
@@ -14,5 +12,6 @@ namespace GreenMapsApp.Model
         public double latitude { get; set; }
         public double longitude { get; set; }
         public string message { get; set; }
+        public string severity { get; set; }
     }
 }

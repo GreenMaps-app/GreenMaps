@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Newtonsoft.Json;
 using GreenMapsApp.Model;
@@ -41,6 +38,7 @@ namespace GreenMapsApp
                 mapLocation.latitude = json.latitude;
                 mapLocation.longitude = json.longitude;
                 mapLocation.message = json.message;
+                mapLocation.severity = json.severity;
 
                 dictionary.Add(mapLocation, json.id);
 
@@ -48,7 +46,7 @@ namespace GreenMapsApp
                 {
                     args.HideInfoWindow = true;
                     string pinName = ((Pin)s).Label;
-                    bool resolved = await App.Current.MainPage.DisplayAlert("Resolve " + pinName, "", "Yes", "No");
+                    bool resolved = await App.Current.MainPage.DisplayAlert("Resolve " + pinName, Convert.ToString(mapLocation), "Yes", "No");
                     if (resolved)
                     {
                         await restService.UpdateResolved(mapLocation, dictionary);

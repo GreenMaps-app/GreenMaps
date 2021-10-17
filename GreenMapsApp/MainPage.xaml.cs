@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using GreenMapsApp.Model;
 using System.Net;
-using System.Linq;
 
 namespace GreenMapsApp
 {
@@ -33,10 +31,17 @@ namespace GreenMapsApp
             // Map on click event, adds pins
             async void OnMapClicked(object sender, MapClickedEventArgs e)
             {
+                bool valid = true;
                 bool answer = await DisplayAlert("Would you like to add a pin", "", "Yes", "No");
                 if (answer)
                 {
                     string label = await DisplayPromptAsync("Add Title","", initialValue: "", maxLength: 49, keyboard: Keyboard.Default);
+
+                    if (label == "")
+                    {
+                        valid = false;
+                    }
+
                     string description = await DisplayPromptAsync("Add Description", "", initialValue: "", maxLength: 100, keyboard: Keyboard.Default);
                     Pin pin = new Pin
                     {
@@ -44,7 +49,9 @@ namespace GreenMapsApp
                         Position = new Position(e.Position.Latitude, e.Position.Longitude),
                         Address = description
                     };
-
+                    string severity = "low";
+                    severity = await DisplayActionSheet("How severe is the environmental issue", "Cancel", null, "High", "Medium", "Low");
+                    
                     // create MapLocationDatum to add to REST API
                     MapLocationDatum outputJson = new MapLocationDatum();
                     foreach(IPAddress address in Dns.GetHostAddresses(Dns.GetHostName()))
@@ -58,23 +65,30 @@ namespace GreenMapsApp
                     outputJson.resolved = false;
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
+                    outputJson.severity = severity.ToLower();
 
-                    // Adds pin information to REST API
-                    string json = JsonConvert.SerializeObject(outputJson);
-                    outputJson.id = await restService.Post(json);
-                    // Adds MapLocationDatum to dictionary
-                    dictionary.Add(outputJson, outputJson.id);
-                    pin.InfoWindowClicked += async (s, args) =>
+                    if (valid)
                     {
-                        args.HideInfoWindow = true;
-                        string pinName = ((Pin)s).Label;
-                        bool resolved = await DisplayAlert("Resolve " + pinName, "", "Yes", "No");
-                        if (resolved)
+                        // Adds pin information to REST API
+                        string json = JsonConvert.SerializeObject(outputJson);
+                        outputJson.id = await restService.Post(json);
+                        // Adds MapLocationDatum to dictionary
+                        dictionary.Add(outputJson, outputJson.id);
+                        pin.InfoWindowClicked += async (s, args) =>
                         {
-                            await restService.UpdateResolved(outputJson, dictionary);
-                        }
-                    };
-                    map.Pins.Add(pin);
+                            args.HideInfoWindow = true;
+                            string pinName = ((Pin)s).Label;
+                            bool resolved = await DisplayAlert("Resolve " + pinName, Convert.ToString(outputJson), "Yes", "No");
+                            if (resolved)
+                            {
+                                await restService.UpdateResolved(outputJson, dictionary);
+                            }
+                        };
+                        map.Pins.Add(pin);
+                    } else
+                    {
+                        await DisplayAlert("Alert", "Must include label name", "OK");
+                    }
                 }
             }
 
