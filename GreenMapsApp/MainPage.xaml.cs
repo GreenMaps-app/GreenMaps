@@ -17,6 +17,7 @@ namespace GreenMapsApp
 
             InitializeComponent();
 
+            Dictionary<MapLocationDatum,int> dictionary = new Dictionary<MapLocationDatum,int>();
             RestService restService = new RestService();
             MapHelperFunctions mapHelper = new MapHelperFunctions();
 
@@ -55,15 +56,27 @@ namespace GreenMapsApp
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
 
+                    pin.InfoWindowClicked += async (s, args) =>
+                    {
+                        args.HideInfoWindow = true;
+                        string pinName = ((Pin)s).Label;
+                        bool resolved = await DisplayAlert("Resolve " + pinName, "", "Yes", "No");
+                        if (resolved)
+                        {
+                            await restService.UpdateResolved(outputJson, dictionary);
+                        }
+                    };
+
                     string json = JsonConvert.SerializeObject(outputJson);
-                    restService.Post(json);
+                    outputJson.id = await restService.Post(json);
+                    dictionary.Add(outputJson, outputJson.id);
                     map.Pins.Add(pin);
                 }
             }
 
             map.MapClicked += OnMapClicked;
 
-            mapHelper.PopulateMap(map);
+            mapHelper.PopulateMap(map, dictionary);
 
             StackLayout stackLayout = new StackLayout
             {

@@ -13,7 +13,6 @@ namespace GreenMapsApp.Model
         public bool resolved { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
-
         public string message { get; set; }
     }
 }
