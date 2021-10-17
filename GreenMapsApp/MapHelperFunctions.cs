@@ -41,7 +41,7 @@ namespace GreenMapsApp
         public async void FindMe(Map map)
         {
             var locator = CrossGeolocator.Current;
-            Plugin.Geolocator.Abstractions.Position position = new Plugin.Geolocator.Abstractions.Position();
+            Plugin.Geolocator.Abstractions.Position position;
 
             position = await locator.GetPositionAsync();
             map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(position.Latitude, position.Longitude),

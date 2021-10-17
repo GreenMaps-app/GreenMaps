@@ -51,6 +51,7 @@ namespace GreenMapsApp
                     outputJson.latitude = e.Position.Latitude;
                     outputJson.longitude = e.Position.Longitude;
                     outputJson.title = label;
+                    outputJson.resolved = false;
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
 
