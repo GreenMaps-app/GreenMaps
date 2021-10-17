@@ -26,16 +26,18 @@ namespace GreenMapsApp
                 IsShowingUser = true,
                 
             };
-
+            
+            // Centers map on user on startup
             mapHelper.FindMe(map);
 
+            // Map on click event, adds pins
             async void OnMapClicked(object sender, MapClickedEventArgs e)
             {
                 bool answer = await DisplayAlert("Would you like to add a pin", "", "Yes", "No");
                 if (answer)
                 {
-                    string label = await DisplayPromptAsync("Add Title","", initialValue: "", maxLength: 16, keyboard: Keyboard.Default);
-                    string description = await DisplayPromptAsync("Add Description", "", initialValue: "", maxLength: 64, keyboard: Keyboard.Default);
+                    string label = await DisplayPromptAsync("Add Title","", initialValue: "", maxLength: 49, keyboard: Keyboard.Default);
+                    string description = await DisplayPromptAsync("Add Description", "", initialValue: "", maxLength: 100, keyboard: Keyboard.Default);
                     Pin pin = new Pin
                     {
                         Label = label,
@@ -43,6 +45,7 @@ namespace GreenMapsApp
                         Address = description
                     };
 
+                    // create MapLocationDatum to add to REST API
                     MapLocationDatum outputJson = new MapLocationDatum();
                     foreach(IPAddress address in Dns.GetHostAddresses(Dns.GetHostName()))
                     {
@@ -56,6 +59,11 @@ namespace GreenMapsApp
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
 
+                    // Adds pin information to REST API
+                    string json = JsonConvert.SerializeObject(outputJson);
+                    outputJson.id = await restService.Post(json);
+                    // Adds MapLocationDatum to dictionary
+                    dictionary.Add(outputJson, outputJson.id);
                     pin.InfoWindowClicked += async (s, args) =>
                     {
                         args.HideInfoWindow = true;
@@ -66,16 +74,13 @@ namespace GreenMapsApp
                             await restService.UpdateResolved(outputJson, dictionary);
                         }
                     };
-
-                    string json = JsonConvert.SerializeObject(outputJson);
-                    outputJson.id = await restService.Post(json);
-                    dictionary.Add(outputJson, outputJson.id);
                     map.Pins.Add(pin);
                 }
             }
 
             map.MapClicked += OnMapClicked;
 
+            // Populate map with REST API information on startup
             mapHelper.PopulateMap(map, dictionary);
 
             StackLayout stackLayout = new StackLayout
@@ -83,7 +88,7 @@ namespace GreenMapsApp
                 Margin = new Thickness(0),
                 Children =
                 {
-                    new Label { Text = "Primary colors",TextColor = Color.FromHex("#77d065"), FontSize = 20 },
+                    new Label { Text = "Green Maps",TextColor = Color.FromHex("#77d065"), FontSize = 20, HorizontalOptions = LayoutOptions.Center},
                     map,
                 }
             };

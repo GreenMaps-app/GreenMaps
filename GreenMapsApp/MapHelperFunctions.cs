@@ -13,12 +13,12 @@ namespace GreenMapsApp
 {
     class MapHelperFunctions
     {
+        // Populate map on function call
         public async void PopulateMap(Map map, Dictionary<MapLocationDatum, int> dictionary)
         {
             RestService restService = new RestService();
             string returnedJsonArray = await restService.GetAll();
             ObservableCollection<PinLocations> pinLocations = new ObservableCollection<PinLocations>();
-
 
             List<MapLocationDatum> parsedJsonArray = JsonConvert.DeserializeObject<List<MapLocationDatum>>(returnedJsonArray);
 
@@ -55,11 +55,11 @@ namespace GreenMapsApp
                     }
                 };
 
-
                 map.Pins.Add(pin);
             }
         }
 
+        // Gets current location of user
         public async void FindMe(Map map)
         {
             Plugin.Geolocator.Abstractions.IGeolocator locator = CrossGeolocator.Current;
