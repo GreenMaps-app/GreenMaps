@@ -10,6 +10,7 @@ namespace GreenMapsApp.Model
         public DateTime dateCreated { get; set; }
         public string ipAddress { get; set; }
         public string title { get; set; }
+        public bool resolved { get; set; }
         public double latitude { get; set; }
         public double longitude { get; set; }
 
