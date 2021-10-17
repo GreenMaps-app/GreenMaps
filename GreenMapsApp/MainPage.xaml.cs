@@ -37,18 +37,13 @@ namespace GreenMapsApp
                 {
                     string label = await DisplayPromptAsync("Add Title","", initialValue: "", maxLength: 49, keyboard: Keyboard.Default);
 
-                    if (label == "")
+                    if (label == "" || label == null)
                     {
                         valid = false;
                     }
 
                     string description = await DisplayPromptAsync("Add Description", "", initialValue: "", maxLength: 100, keyboard: Keyboard.Default);
-                    Pin pin = new Pin
-                    {
-                        Label = label,
-                        Position = new Position(e.Position.Latitude, e.Position.Longitude),
-                        Address = description
-                    };
+                    
                     string severity = "low";
                     severity = await DisplayActionSheet("How severe is the environmental issue", "Cancel", null, "High", "Medium", "Low");
                     
@@ -66,9 +61,16 @@ namespace GreenMapsApp
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
                     outputJson.severity = severity.ToLower();
-
+                    Console.WriteLine(valid);
+                    Console.WriteLine("label");
                     if (valid)
                     {
+                        Pin pin = new Pin
+                        {
+                            Label = label,
+                            Position = new Position(e.Position.Latitude, e.Position.Longitude),
+                            Address = description
+                        };
                         // Adds pin information to REST API
                         string json = JsonConvert.SerializeObject(outputJson);
                         outputJson.id = await restService.Post(json);
