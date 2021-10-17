@@ -18,6 +18,7 @@ public class RestService : IRestService
     // see https://jsonplaceholder.typicode.com/
     private const string BaseUrL = "https://greenmapsapi.azurewebsites.net/api/MapLocation/1";
 
+    // Constructor
     public RestService()
     {
         client = new HttpClient();
@@ -25,6 +26,7 @@ public class RestService : IRestService
         client.MaxResponseContentBufferSize = 256000;
     }
 
+    // Gets a single value point by id
     public async Task<string> Get(string uri)
     {
         HttpResponseMessage response = await client.GetAsync(uri);
@@ -32,6 +34,7 @@ public class RestService : IRestService
         return response.Content.ReadAsStringAsync().Result;
     }
 
+    // Gets all pin locations from REST API
     public async Task<string> GetAll()
     {
         string baseUrlAll = "https://greenmapsapi.azurewebsites.net/api/MapLocation";
@@ -39,6 +42,7 @@ public class RestService : IRestService
         return await Get(baseUrlAll);
     }
 
+    // Adds pin information to REST API
     public async Task<int> Post(string String)
     {
         string baseUrlPost = "https://greenmapsapi.azurewebsites.net/api/MapLocation/add";
@@ -48,6 +52,7 @@ public class RestService : IRestService
         return generatedIntID;
     }
 
+    // Update status of pin to the opposite of what it was
     public async Task UpdateResolved(MapLocationDatum item, System.Collections.Generic.Dictionary<MapLocationDatum, int> dictionary)
     {
         bool resolved = item.resolved;
