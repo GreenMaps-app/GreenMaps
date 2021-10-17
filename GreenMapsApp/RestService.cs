@@ -1,4 +1,7 @@
-﻿using System;
+﻿using GreenMapsApp.Model;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,14 +39,21 @@ public class RestService : IRestService
         return await Get(baseUrlAll);
     }
 
-    public async void Post(string String)
+    public async Task<int> Post(string String)
     {
-        string baseUrlAll = "https://greenmapsapi.azurewebsites.net/api/MapLocation/add";
+        string baseUrlPost = "https://greenmapsapi.azurewebsites.net/api/MapLocation/add";
         StringContent content = new StringContent(String, Encoding.UTF8, "application/json");
-        Console.WriteLine("asnycsearch");
-        Console.WriteLine(String);
-        HttpResponseMessage response = await client.PostAsync(baseUrlAll, content);
-        Console.WriteLine(response);
-        Console.WriteLine("response");
+        HttpResponseMessage response = await client.PostAsync(baseUrlPost, content);
+        int generatedIntID = int.Parse(response.Content.ReadAsStringAsync().Result);
+        return generatedIntID;
+    }
+
+    public async Task UpdateResolved(MapLocationDatum item, System.Collections.Generic.Dictionary<MapLocationDatum, int> dictionary)
+    {
+        bool resolved = item.resolved;
+        bool notresolved = !resolved;
+        string baseUrlPut = $"https://greenmapsapi.azurewebsites.net/api/MapLocation/update?id={dictionary[item]}&status={notresolved}";
+
+        var response = await client.PutAsync(baseUrlPut, null);
     }
 }
