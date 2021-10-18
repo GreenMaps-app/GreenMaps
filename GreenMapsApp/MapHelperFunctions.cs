@@ -46,7 +46,15 @@ namespace GreenMapsApp
                 {
                     args.HideInfoWindow = true;
                     string pinName = ((Pin)s).Label;
-                    bool resolved = await App.Current.MainPage.DisplayAlert("Resolve " + pinName, Convert.ToString(mapLocation), "Yes", "No");
+                    string resolutionStatus;
+                    if (mapLocation.resolved)
+                    {
+                        resolutionStatus = "Resolved";
+                    } else
+                    {
+                        resolutionStatus = "Unreolved";
+                    }
+                    bool resolved = await App.Current.MainPage.DisplayAlert("Resolve " + pinName + "?", mapLocation.title + "\n" + mapLocation.message + "\n" + mapLocation.latitude.ToString("0.0000000000") + ":" + mapLocation.longitude.ToString("0.0000000000") + "\n" + "Severity: " + mapLocation.severity + "\n" + "Status: " + resolutionStatus, "Yes", "No");
                     if (resolved)
                     {
                         await restService.UpdateResolved(mapLocation, dictionary);
