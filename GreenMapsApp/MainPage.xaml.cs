@@ -61,8 +61,6 @@ namespace GreenMapsApp
                     outputJson.message = description;
                     outputJson.dateCreated = DateTime.Now;
                     outputJson.severity = severity.ToLower();
-                    Console.WriteLine(valid);
-                    Console.WriteLine("label");
                     if (valid)
                     {
                         Pin pin = new Pin
@@ -86,6 +84,7 @@ namespace GreenMapsApp
                                 await restService.UpdateResolved(outputJson, dictionary);
                             }
                         };
+
                         map.Pins.Add(pin);
                     } else
                     {
@@ -98,14 +97,30 @@ namespace GreenMapsApp
 
             // Populate map with REST API information on startup
             mapHelper.PopulateMap(map, dictionary);
+            Entry entry = new Entry();
+            entry.BackgroundColor = Color.FromHex("#2c3e50");
+
+            void EntryCompleted(object sender, EventArgs e)
+            {
+                Console.WriteLine(((Entry)sender).Text);
+                Console.WriteLine("sender");
+                map.Pins.Clear();
+                string text = ((Entry)sender).Text;
+                dictionary = new Dictionary<MapLocationDatum, int>();
+                mapHelper.PopulateMapSearch(map, dictionary, text);
+            }
+
+            entry.Completed += EntryCompleted;
 
             StackLayout stackLayout = new StackLayout
             {
+                BackgroundColor = Color.FromHex("#77d065"),
                 Margin = new Thickness(0),
                 Children =
                 {
                     new Label { Text = "Green Maps",TextColor = Color.FromHex("#77d065"), FontSize = 20, HorizontalOptions = LayoutOptions.Center},
                     map,
+                    entry
                 }
             };
 

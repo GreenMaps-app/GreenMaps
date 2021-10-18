@@ -59,4 +59,16 @@ public class RestService : IRestService
 
         var response = await client.PutAsync(baseUrlPut, null);
     }
+
+    // Search api information
+    public async Task<string> SearchRESTAPI(string input)
+    {
+        Console.WriteLine(input);
+        Console.WriteLine("input");
+        string baseUrlPut = $"https://greenmapsapi.azurewebsites.net/api/MapLocation/search/{input}";
+
+        HttpResponseMessage response = await client.GetAsync(baseUrlPut);
+
+        return response.Content.ReadAsStringAsync().Result;
+    }
 }
