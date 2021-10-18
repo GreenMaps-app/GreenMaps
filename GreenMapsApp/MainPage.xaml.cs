@@ -99,6 +99,17 @@ namespace GreenMapsApp
             // Populate map with REST API information on startup
             mapHelper.PopulateMap(map, dictionary);
 
+            Button navButton = new Button
+            {
+                Text = "Go to next page",
+                VerticalOptions = LayoutOptions.CenterAndExpand,
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            navButton.Clicked += (object sender, EventArgs e) => {
+                Application.Current.MainPage = new MenuPage();
+            };
+
             StackLayout stackLayout = new StackLayout
             {
                 Margin = new Thickness(0),
@@ -106,6 +117,7 @@ namespace GreenMapsApp
                 {
                     new Label { Text = "Green Maps",TextColor = Color.FromHex("#77d065"), FontSize = 20, HorizontalOptions = LayoutOptions.Center},
                     map,
+                    navButton
                 }
             };
 
