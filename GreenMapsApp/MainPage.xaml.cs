@@ -78,7 +78,16 @@ namespace GreenMapsApp
                         {
                             args.HideInfoWindow = true;
                             string pinName = ((Pin)s).Label;
-                            bool resolved = await DisplayAlert("Resolve " + pinName, Convert.ToString(outputJson), "Yes", "No");
+                            string resolutionStatus;
+                            if (outputJson.resolved)
+                            {
+                                resolutionStatus = "Resolved";
+                            }
+                            else
+                            {
+                                resolutionStatus = "Unresolved";
+                            }
+                            bool resolved = await DisplayAlert("Resolve " + pinName + "?", outputJson.title + "\n" + outputJson.message + "\n" + outputJson.latitude.ToString("0.0000000000") + ":" + outputJson.longitude.ToString("0.0000000000") + "\n" + "Severity: " + outputJson.severity + "\n" + "Status: " + resolutionStatus, "Yes", "No");
                             if (resolved)
                             {
                                 await restService.UpdateResolved(outputJson, dictionary);
