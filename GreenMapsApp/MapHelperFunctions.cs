@@ -57,6 +57,52 @@ namespace GreenMapsApp
             }
         }
 
+        public async void PopulateMapSearch(Map map, Dictionary<MapLocationDatum, int> dictionary, string input)
+        {
+            RestService restService = new RestService();
+            string returnedJsonArray = await restService.SearchRESTAPI(input);
+            ObservableCollection<PinLocations> pinLocations = new ObservableCollection<PinLocations>();
+
+            List<MapLocationDatum> parsedJsonArray = JsonConvert.DeserializeObject<List<MapLocationDatum>>(returnedJsonArray);
+
+            foreach (MapLocationDatum json in parsedJsonArray)
+            {
+                MapLocationDatum mapLocation = new MapLocationDatum();
+
+                Pin pin = new Pin
+                {
+                    Label = "Test",
+                    Position = new Position(json.latitude, json.longitude),
+                    Address = json.message
+                };
+
+                mapLocation.id = json.id;
+                mapLocation.dateCreated = json.dateCreated;
+                mapLocation.ipAddress = json.ipAddress;
+                mapLocation.title = json.title;
+                mapLocation.resolved = json.resolved;
+                mapLocation.latitude = json.latitude;
+                mapLocation.longitude = json.longitude;
+                mapLocation.message = json.message;
+                mapLocation.severity = json.severity;
+
+                dictionary.Add(mapLocation, json.id);
+
+                pin.InfoWindowClicked += async (s, args) =>
+                {
+                    args.HideInfoWindow = true;
+                    string pinName = ((Pin)s).Label;
+                    bool resolved = await App.Current.MainPage.DisplayAlert("Resolve " + pinName, Convert.ToString(mapLocation), "Yes", "No");
+                    if (resolved)
+                    {
+                        await restService.UpdateResolved(mapLocation, dictionary);
+                    }
+                };
+
+                map.Pins.Add(pin);
+            }
+        }
+
         // Gets current location of user
         public async void FindMe(Map map)
         {
