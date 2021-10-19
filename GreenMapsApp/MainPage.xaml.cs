@@ -111,12 +111,13 @@ namespace GreenMapsApp
 
             void EntryCompleted(object sender, EventArgs e)
             {
-                Console.WriteLine(((Entry)sender).Text);
-                Console.WriteLine("sender");
-                map.Pins.Clear();
-                string text = ((Entry)sender).Text;
-                dictionary = new Dictionary<MapLocationDatum, int>();
-                mapHelper.PopulateMapSearch(map, dictionary, text);
+                if (!(((Entry)sender).Text == null || ((Entry)sender).Text == ""))
+                {
+                    map.Pins.Clear();
+                    string text = ((Entry)sender).Text;
+                    dictionary = new Dictionary<MapLocationDatum, int>();
+                    mapHelper.PopulateMapSearch(map, dictionary, text);
+                }
             }
 
             entry.Completed += EntryCompleted;
